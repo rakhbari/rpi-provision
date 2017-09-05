@@ -1,7 +1,26 @@
 - hosts: rpis
+  remote_user: pi
+  become: yes
+  become_user: root
+  become_method: sudo
   tasks:
   - name: Set authorized key took from url
+    remote_user: pi
     authorized_key:
       user: pi
       state: present
-      key: https://raw.githubusercontent.com/rakhbari/rpi-provision/master/rpi_authorized_keys.txt
+      key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+  - name: Copy rpi-hostname.sh file
+    copy:
+      src: ../scripts/rpi-hostname.sh
+      dest: /sbin/rpi-hostname.sh
+      owner: root
+      group: root
+      mode: "u=rwx,g=rx,o=rx"
+  - name: Add reference to /sbin/rpi-hostname.sh in /etc/rc.local
+    lineinfile:
+      path: /etc/rc.local
+      insertbefore: "exit 0"
+      state: present
+      line: '/sbin/rpi-hostname.sh'
+

@@ -17,24 +17,24 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 	  vb.cpus = 2
 	end
 	
-  ## Configure some networking stuff on the guest VM
-  config.vm.host_name = 'ansible-control'
-  config.vm.network "private_network", ip: "#{vm_ip}"
+    ## Configure some networking stuff on the guest VM
+    config.vm.host_name = "#{proj_name}"
+    config.vm.network "private_network", ip: "#{vm_ip}"
     
-  ## Don't create a brand new SSH key pair. Use the default insecure_private_key
-  config.ssh.insert_key = false
+    ## Don't create a brand new SSH key pair. Use the default insecure_private_key
+    config.ssh.insert_key = false
 	
 	## For masterless, mount your salt file root
 	config.vm.synced_folder "./", "/home/vagrant/#{proj_name}"
 	
 	config.vm.provision "fix-no-tty", type: "shell" do |s|
-		s.privileged = false
-		s.inline = "sudo sed -i '/tty/!s/mesg n/tty -s \\&\\& mesg n/' /root/.profile"
+	  s.privileged = false
+	  s.inline = "sudo sed -i '/tty/!s/mesg n/tty -s \\&\\& mesg n/' /root/.profile"
 	end
 	
-  config.vm.provision "run-test", type: "shell" do |s|
-    s.keep_color = true
-    s.inline = "sudo -u vagrant -H sh -c 'cd #{proj_name};./scripts/ansible_install.sh'"
-  end
+    config.vm.provision "shell" do |s|
+      s.keep_color = true
+      s.inline = "cd #{proj_name} && scripts/ansible_install.sh"
+    end
 
 end

@@ -4,7 +4,7 @@
   become_user: root
   become_method: sudo
   tasks:
-  - name: Set authorized key took from url
+  - name: Set authorized key taken from url
     remote_user: pi
     authorized_key:
       user: pi

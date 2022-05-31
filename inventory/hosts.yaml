@@ -1,0 +1,9 @@
+all:
+  vars:
+    syslog_server: 10.0.1.18
+  children:
+    rpis:
+      hosts:
+        rpiz-dc46d636.lan:
+        rpizw-2a63f674.lan:
+        rpizw-9f5d655b.lan:

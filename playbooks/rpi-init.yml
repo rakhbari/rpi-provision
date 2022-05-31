@@ -1,0 +1,55 @@
+- hosts: rpis
+  remote_user: pi
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+  - name: Set authorized key took from url
+    remote_user: pi
+    authorized_key:
+      user: pi
+      state: present
+      key: "{{ lookup('file', lookup('env','PWD') + '/keys/id_rsa.pub') }}"
+  - name: Copy rpi-hostname.sh file
+    copy:
+      src: ../scripts/rpi-hostname.sh
+      dest: /sbin/rpi-hostname.sh
+      owner: root
+      group: root
+      mode: "u=rwx,g=rx,o=rx"
+  - name: Copy rpi-disable-power-mgmt.sh file
+    copy:
+      src: ../scripts/rpi-disable-power-mgmt.sh
+      dest: /sbin/rpi-disable-power-mgmt.sh
+      owner: root
+      group: root
+      mode: "u=rwx,g=rx,o=rx"
+  - name: Add reference to /sbin/rpi-hostname.sh in /etc/rc.local
+    lineinfile:
+      dest: /etc/rc.local
+      insertbefore: "exit 0"
+      state: present
+      line: '/sbin/rpi-hostname.sh'
+  - name: Add reference to /sbin/rpi-disable-power-mgmt.sh in /etc/rc.local
+    lineinfile:
+      dest: /etc/rc.local
+      insertbefore: "exit 0"
+      state: present
+      line: '/sbin/rpi-disable-power-mgmt.sh'
+  - name: Ensure XKBLAYOUT is set to US
+    lineinfile:
+      dest: /etc/default/keyboard
+      state: present
+      line: 'XKBLAYOUT="us"'
+      regexp: '^XKBLAYOUT='
+  - name: Ensure rsyslog remote-server.conf
+    template:
+      src: ../config/rsyslog/remote-server.conf.j2
+      dest: /etc/rsyslog.d/remote-server.conf
+  - name: Ensure rsyslog queue-events.conf
+    copy:
+      src: ../config/rsyslog/queue-events.conf
+      dest: /etc/rsyslog.d/queue-events.conf
+      owner: root
+      group: root
+      mode: "u=rw,g=r,o=r"

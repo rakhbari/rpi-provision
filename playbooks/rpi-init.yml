@@ -1,9 +1,11 @@
-- hosts: rpis
+- hosts: all
   remote_user: pi
   become: yes
   become_user: root
   become_method: sudo
   tasks:
+  - name: Include all needed variable definitions
+    include_vars: ../config/vars.yaml
   - name: Set authorized key took from url
     remote_user: pi
     authorized_key:

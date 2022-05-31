@@ -1,6 +1,4 @@
 all:
-  vars:
-    syslog_server: 10.0.1.18
   children:
     rpis:
       hosts:

@@ -1,0 +1,15 @@
+- hosts: all
+  remote_user: pi
+  become: yes
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - ../keys/secret-vars.yaml
+  tasks:
+  - name: copy wpa_supplicant.conf file
+    template:
+      src: ../config/wpa_supplicant.conf.j2
+      dest: /etc/wpa_supplicant/wpa_supplicant.conf
+      owner: root
+      group: root
+      mode: "u=rw,g=,o="

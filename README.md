@@ -63,3 +63,8 @@ ansible rpis -i inventory/ -u pi --key-file keys/id_rsa -m ping
 ```
 ansible rpis -i inventory/ -u pi --key-file keys/id_rsa -a "sudo reboot"
 ```
+
+...Or if you want to only run a section of the `rpi-init.yaml` playbook identified by a tag:
+```
+ansible-playbook playbooks/rpi-init.yaml -i inventory/ --key-file keys/id_rsa --tags "timezone"
+```

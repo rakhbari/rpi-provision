@@ -3,9 +3,25 @@
   become: yes
   become_user: root
   become_method: sudo
+  vars_files:
+    - ../config/vars.yaml
   tasks:
-  - name: Include all needed variable definitions
-    include_vars: ../config/vars.yaml
+  - name: Set the configured zone_info symlink
+    ansible.builtin.file:
+      src: /usr/share/zoneinfo/{{ zone_info }}
+      dest: /etc/localtime
+      owner: root
+      group: root
+      state: link
+      mode: "u=rw,g=r,o=r"
+    tags:
+      - timezone
+    register: zone_info
+  - name: Run dpkg-reconfigure only if zone_info changed
+    ansible.builtin.shell: dpkg-reconfigure -f noninteractive tzdata
+    tags:
+      - timezone
+    when: zone_info.changed
   - name: Set authorized key took from url
     remote_user: pi
     authorized_key:

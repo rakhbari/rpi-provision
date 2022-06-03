@@ -1,0 +1,58 @@
+- hosts: all
+  remote_user: pi
+  become: yes
+  become_user: root
+  become_method: sudo
+  vars_files:
+    - ../keys/secret-vars.yaml
+    - ../keys/certs.yaml
+  pre_tasks:
+    - name: Check systemctl service status
+      ansible.builtin.shell: systemctl status node_exporter
+      register: service_status
+      failed_when: not(service_status.rc == 4 or service_status.rc == 0)
+    - name: Stop and disable node_exporter service, if running
+      ansible.builtin.systemd:
+        name: node_exporter
+        state: stopped
+        enabled: no
+      when: service_status.rc == 0
+    - name: Remove systemd .service file in /etc/systemd/
+      ansible.builtin.file:
+        path: /etc/systemd/system/node_exporter.service
+        state: absent
+      when: service_status.rc == 0
+    - name: Remove systemd .service file in /usr/lib/systemd/
+      ansible.builtin.file:
+        path: /usr/lib/systemd/system/node_exporter.service
+        state: absent
+      when: service_status.rc == 0
+    - name: Run command systemctl daemon-reload
+      ansible.builtin.shell: systemctl daemon-reload
+      when: service_status.rc == 0
+    - name: Run command systemctl reset-failed
+      ansible.builtin.shell: systemctl reset-failed
+      when: service_status.rc == 0
+    - name: Install cryptography python package
+      pip:
+        name: cryptography
+    - name: Create node_exporter cert dir
+      ansible.builtin.file:
+        path: "/etc/node_exporter"
+        state: directory
+        owner: root
+        group: root
+    - name: Create tls.csr
+      ansible.builtin.copy:
+        content: "{{ pi_csr }}"
+        dest: /etc/node_exporter/tls.csr
+    - name: Create tls.key
+      ansible.builtin.copy:
+        content: "{{ pi_key }}"
+        dest: /etc/node_exporter/tls.key
+    - name: Generate a Self Signed OpenSSL certificate
+      community.crypto.x509_certificate:
+        path: /etc/node_exporter/tls.cert
+        csr_path: /etc/node_exporter/tls.csr
+        privatekey_path: /etc/node_exporter/tls.key
+        provider: selfsigned

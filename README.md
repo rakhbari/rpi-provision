@@ -4,7 +4,7 @@ Ansible playbook & config files to provision Raspberry Pis
 ## Initial Secrets Setup
 We use Ansible Vault to encrypt (and later decrypt) some variable values used in some config files. You'll need to do the following:
 
-Create a `~/valut-pass` file and place your Valut password string in there. Be sure to `chmod 0600` the file.
+Create a `~/vault-pass` file and place your Valut password string in there. Be sure to `chmod 0600` the file.
 
 Create 2 encrypted values:
 ```

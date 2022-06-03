@@ -6,6 +6,14 @@
   vars_files:
     - ../config/vars.yaml
   tasks:
+  - name: Install python-pip packages and update repository
+    apt:
+      pkg:
+        - python-pip
+        - python3-pip
+      update_cache: yes
+    tags:
+      - prereq
   - name: Set the configured zone_info symlink
     ansible.builtin.file:
       src: /usr/share/zoneinfo/{{ zone_info }}

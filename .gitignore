@@ -1,3 +1,5 @@
 *.retry
 .vagrant
 keys/id_rsa*
+keys/pi.*
+

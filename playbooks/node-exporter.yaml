@@ -34,8 +34,9 @@
       ansible.builtin.shell: systemctl reset-failed
       when: service_status.rc == 0
     - name: Install cryptography python package
-      pip:
+      ansible.builtin.pip:
         name: cryptography
+        state: present
     - name: Create node_exporter cert dir
       ansible.builtin.file:
         path: "/etc/node_exporter"
@@ -56,3 +57,9 @@
         csr_path: /etc/node_exporter/tls.csr
         privatekey_path: /etc/node_exporter/tls.key
         provider: selfsigned
+  vars:
+    node_exporter_tls_server_config:
+      cert_file: /etc/node_exporter/tls.cert
+      key_file: /etc/node_exporter/tls.key
+  roles:
+    - cloudalchemy.node_exporter

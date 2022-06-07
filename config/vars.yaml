@@ -1,2 +1,3 @@
 syslog_server: 10.0.1.18
 zone_info: America/Los_Angeles
+xkblayout: us

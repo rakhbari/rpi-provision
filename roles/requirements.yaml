@@ -1,0 +1,5 @@
+---
+roles:
+  - src: https://github.com/cloudalchemy/ansible-node-exporter.git
+    name: cloudalchemy.node_exporter
+    scm: git

@@ -62,11 +62,11 @@
       insertbefore: "exit 0"
       state: present
       line: '/sbin/rpi-disable-power-mgmt.sh'
-  - name: Ensure XKBLAYOUT is set to US
+  - name: Ensure XKBLAYOUT is set to the configured value
     lineinfile:
       dest: /etc/default/keyboard
       state: present
-      line: 'XKBLAYOUT="us"'
+      line: 'XKBLAYOUT="{{ xkblayout }}"'
       regexp: '^XKBLAYOUT='
   - name: Ensure rsyslog remote-server.conf
     template:

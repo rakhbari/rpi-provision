@@ -19,7 +19,12 @@ The `node-exporter.yaml` playbook is configured to install `node-exporter` role 
 openssl req -nodes -newkey rsa:2048 -keyout keys/pi.key -out keys/pi.csr
 ```
 
-You then create a `keys/certs.yaml` file and place the contents of `keys/pi.key` and `keys/pi.csr` as 2 separate YAML variables as such:
+Next you'll be saving the contents of the above 2 files in encrypted format by using `ansible-vault`. When you issue the next command, you'll be presented with an editor.
+```
+ansible-vault create --vault-pass-file ~/vault-pass keys/certs.yaml
+```
+
+Once the editor opens, paste the contents of `keys/pi.key` and `keys/pi.csr` as 2 separate YAML variables into the editor as such:
 ```
 pi_csr: |
   <contents of keys/pi.csr>
@@ -28,10 +33,9 @@ pi_key: |
   <contents of keys/pi.key> 
 ```
 
-Next you must encrypt the contents of `keys/certs.yaml` by:
-```
-ansible-vault create --vault-pass-file ~/vault-pass keys/certs.yaml
-```
+__NOTE__: The indentation of the file contents is very important!
+
+Save the editor (Ctrl-X in nano) and `ansible-vault` will encrypt the content and save it to `keys/certs.yaml`.
 
 And obviously after that you only check-in `keys/certs.yaml` into Github and leave the other files out.
 

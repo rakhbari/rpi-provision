@@ -68,14 +68,4 @@
       state: present
       line: 'XKBLAYOUT="{{ xkblayout }}"'
       regexp: '^XKBLAYOUT='
-  - name: Ensure rsyslog remote-server.conf
-    template:
-      src: ../config/rsyslog/remote-server.conf.j2
-      dest: /etc/rsyslog.d/remote-server.conf
-  - name: Ensure rsyslog queue-events.conf
-    copy:
-      src: ../config/rsyslog/queue-events.conf
-      dest: /etc/rsyslog.d/queue-events.conf
-      owner: root
-      group: root
-      mode: "u=rw,g=r,o=r"
+- import_playbook: syslog.yaml
